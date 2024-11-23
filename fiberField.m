@@ -1,6 +1,5 @@
-function E = fiberField(x,x0)
+function E = fiberField(x,E0, x0)
 %The field amplitude of the fibers in the system
-E = inputArg1;
-outputArg2 = inputArg2;
+E = E0*exp((-1.0*x^2.0)/(x0^2.0));
 end
 
