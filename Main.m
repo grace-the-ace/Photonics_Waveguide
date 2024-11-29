@@ -33,6 +33,11 @@ PowerPercentage4 = 0;
 omega = 0; %What is omega?
 miu = 0; %Calc miu
 
+%Integral for non-degenerate coupling - chang around to solve for
+%amplitude?
+%insert waveguide functions
+%
+
 %Use to get amplitude needed to get correct amplitude, 
 % which then reverse to get width of original wave guide?
 
