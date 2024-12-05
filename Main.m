@@ -16,22 +16,36 @@ startingWidth; %nm
 k0 = 2*pi/laserAvgWaveLength;
 h = 0; %TODO determine width to get what we want
 
-%TODO Do we use characteristic equation or normalized plus graph?
+%Normalized plus graph?
 gamma = 0;
 kappa = 0;
 beta = 0;
 
 %Set Fiber field guide equal to waveguide field to get...
 
+%Area formula
+
 %Beam Splitter
 PowerPercentage1 = 1;
 PowerPercentage2 = 0;
 PowerPercentage3 = 0;
 PowerPercentage4 = 0;
-
-
 omega = 0; %What is omega?
 miu = 0; %Calc miu
+
+%Assume I have h and Amplitude from part 1
+
+%First pair 1-2
+widthApart1 = 1;
+lengthNext1 = 1;
+joinTurn = 5; %minimum bending radius
+
+%Second pairing 1-3
+widthApart2 = 1;
+lengthNext2 = 1;
+
+%Third pairing 2-4
+
 
 %Integral for non-degenerate coupling - chang around to solve for
 %amplitude?
