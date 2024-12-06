@@ -6,14 +6,14 @@ epislon_0 = 8.854*10^-12; %F/m
 miu_0 = 4*pi*10^-7; %H/m
 
 %Laser
-laserPower = 10; %mW
-laserAvgWaveLength = 1.5; %microm
-laserWavelengthRange = 100; %nm
+laserPower = 10e-3; %mW
+laserAvgWaveLength = 1.5e-6; %microm
+laserWavelengthRange = 100e-9; %nm
 
-outputPowerMin = 1; %mW
+outputPowerMin = 1e-3; %mW
 maxWaveguideArea = 1; %mm^2
-areaVariation = 5; %nm
-startingWidth = 0; %nm
+areaVariation = 5e-9; %nm
+h_taper = 0; %nm
 
 %Laser into first Waveguide
 k0 = 2*pi/laserAvgWaveLength;
@@ -22,16 +22,9 @@ omega = k*c/nf;
 
 %Amplitude of Laser
 x0 = 5.0e-6;
-E_0 = sqrt((20*10^-3)/(c*epislon_0*sqrt((pi*x0^2)/(2.0))));
+E_0 = sqrt(laserPower*(miu_0/laserAvgWaveLength)*sqrt(2/((x0^2)*pi)));
 
-gamma = (-3);
-beta = sqrt((1/gamma)^2+(k0^2*nf^2));
-%initial taper size
-h_taper = 0; %TODO determine width to get what we want
-neff = 0;
-%gamma = k0 * sqrt(neff^2+nc^2);
-kappa = sqrt(k^2-beta^2);
-beta = 0;
+
 %Normalized plus graph?
 
 
