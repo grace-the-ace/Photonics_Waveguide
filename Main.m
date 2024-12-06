@@ -1,25 +1,39 @@
-%Variables
+%Constants
 nf = 3.5; %Silicon index of refraction
 ns = 1.5; %SiO2
+c = 3 *10^8;
+epislon_0 = 8.854*10^-12; %F/m
+miu_0 = 4*pi*10^-7; %H/m
 
 %Laser
 laserPower = 10; %mW
-laserAvgWaveLength = 1500; %nm
+laserAvgWaveLength = 1.5; %microm
 laserWavelengthRange = 100; %nm
 
 outputPowerMin = 1; %mW
 maxWaveguideArea = 1; %mm^2
 areaVariation = 5; %nm
-startingWidth; %nm
+startingWidth = 0; %nm
 
 %Laser into first Waveguide
 k0 = 2*pi/laserAvgWaveLength;
-h = 0; %TODO determine width to get what we want
+k = k0*nf;
+omega = k*c/nf;
 
-%Normalized plus graph?
-gamma = 0;
-kappa = 0;
+%Amplitude of Laser
+x0 = 5.0e-6;
+E_0 = sqrt((20*10^-3)/(c*epislon_0*sqrt((pi*x0^2)/(2.0))));
+
+gamma = (-3);
+beta = sqrt((1/gamma)^2+(k0^2*nf^2));
+%initial taper size
+h_taper = 0; %TODO determine width to get what we want
+neff = 0;
+%gamma = k0 * sqrt(neff^2+nc^2);
+kappa = sqrt(k^2-beta^2);
 beta = 0;
+%Normalized plus graph?
+
 
 %Set Fiber field guide equal to waveguide field to get...
 
@@ -30,7 +44,7 @@ PowerPercentage1 = 1;
 PowerPercentage2 = 0;
 PowerPercentage3 = 0;
 PowerPercentage4 = 0;
-omega = 0; %What is omega?
+ %What is omega?
 miu = 0; %Calc miu
 
 %Assume I have h and Amplitude from part 1
