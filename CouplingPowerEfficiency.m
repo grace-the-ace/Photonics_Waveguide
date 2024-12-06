@@ -1,7 +1,6 @@
-function [outputArg1,outputArg2] = CouplingPowerEfficiency(inputArg1,inputArg2)
+function [powerPercent] = CouplingPowerEfficiency(mode_width_i,mode_width_t)
 %COUPLINGPOWEREFFICIENCY Summary of this function goes here
 %   Detailed explanation goes here
-outputArg1 = inputArg1;
-outputArg2 = inputArg2;
+powerPercent = 4*(((mode_width_i^2)*(mode_width_t^2))/(mode_width_i^2+mode_width_t^2)^2);
 end
 
