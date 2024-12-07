@@ -67,6 +67,13 @@ h_taper_saved = 6.23e-9; %nm
 powerAfterTransmission = laserPower*powerTransmitted - laserPower*powerTransmitted*claddingLoss;
 b = 0.856;
 hbeam = 0.47e-6; %microns
+beta = k0*sqrt((nf^2-ns^2)*b+ns^2);
+gamma = sqrt(beta^2-(k0^2)*(ns^2));
+mode_width = 1/gamma;
+kappa = sqrt(k^2-beta^2);
+
+%Get amplitude
+C=sqrt((2*powerAfterTransmission)/((1/gamma)+((hbeam)/(cos(kappa*hbeam/2)))))
 
 PowerPercentage1 = 1;
 PowerPercentage2 = 0;
@@ -124,7 +131,7 @@ b=double(b);
 beta4 = k0*sqrt((nf^2-ns^2)*b+ns^2);
 neff4 = beta4/k0;
 
-modes=V/pi
+modes=V/pi;
 Area = 4*(length*hmax);
 %Use to get amplitude needed to get correct amplitude, 
 % which then reverse to get width of original wave guide?
