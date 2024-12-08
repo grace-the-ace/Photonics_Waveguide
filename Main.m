@@ -17,8 +17,8 @@ areaVariation = 5e-9; %nm
 
 laserWaveLengths = linspace(1.4e-6,1.6e-6,100);
 
-figure
-plot(laserWaveLengths,calc_k0(laserWaveLengths))
+%figure
+%plot(laserWaveLengths,calc_k0(laserWaveLengths))
 
 %Laser into first Waveguide
 k0 = 2*pi/laserAvgWaveLength;
@@ -32,7 +32,7 @@ E_0 = sqrt(laserPower*(miu_0/laserAvgWaveLength)*sqrt(2/((x0^2)*pi)));
 
 %To find variables that allow us to calculate mode width, which lets use
 %calc power coupling efficiency
-b= 0.0017;
+b= 0.0025;
 [h_taper,V_taper,gamma_taper,kappa_taper,beta_taper,neff_taper] = norm_params_from_b(b,0,k0,nf,ns);
 
 h_taper_saved = 6.23e-9; %nm 
@@ -42,7 +42,7 @@ mode_width = 1/gamma_taper;
 
 
 %Power efficiency
-powerTransmitted = CouplingPowerEfficiency(1/gamma_taper,x0);
+powerTransmitted = CouplingPowerEfficiency(1/gamma_taper,x0,nf,neff_taper);
 
 %Percent under curve past cladding (loss from lack of cladding)
 %Normalize to get probablity under curve is 1
@@ -67,9 +67,9 @@ hbeam = 0.47e-6; %microns
 
 mode_width_beam = 1/gamma_beam;
 
-omega = k*c/nf;
+omega = k0*c;
 %Get amplitude
-C=sqrt((2*powerAfterTransmission)/((1/gamma_beam+((hbeam)/(cos(kappa_beam*hbeam/2))))))
+C=sqrt((2*powerAfterTransmission)/((1/gamma_beam+((hbeam)/(cos(kappa_beam*hbeam/2))))));
 
 PowerPercentage1 = 1;
 PowerPercentage2 = 0;
@@ -100,24 +100,37 @@ length = 1e-3; %length of waveguides
 %Decided two microns was sufficent
 pert = perturbationConstant(omega, epislon_0,ns,nf);
 
+%First increase to just below mode of order 2
 V2 = 3*pi;
 [h0,gamma0,kappa0,beta0,neff0] = norm_params_from_V(V2, 0, k0,nf,ns);
 [h2,gamma2,kappa2,beta2,neff2] = norm_params_from_V(V2, 2, k0,nf,ns);
 
-K = nondegenerateCouplingCoef(C,pert,h2,hbeam,kappa0,kappa2);
-BA = BoverA(K,beta0,beta2);
+amp0 = findAmp(omega,miu_0,beta0,kappa0,gamma0,h0);
+amp2 = findAmp(omega,miu_0,beta2,kappa2,gamma2,h2);
 
-V3 = 5*pi;
-[h3,gamma3,kappa3,beta3,neff3] = norm_params_from_V(V3, 4, k0,nf,ns);
+h1 = h2-(1e-8);
+a1 = 0.00000993;
+K02 = nondegenerateCouplingCoef(amp0,amp2,pert,h2,h1,kappa0,kappa2);
+BA02 = BoverA(K02,beta0,beta2,a1);
 
-V4 = 7*pi;
-[h4,gamma4,kappa4,beta4,neff4] = norm_params_from_V(V4, 6, k0,nf,ns);
+hmax=1e-6;
+Vmax1=hmax*k0*sqrt(nf^2-ns^2);
+modes = Vmax1/pi;
 
-modes=V4/pi;
-hmax=2e-6;
-Vmax=hmax*k0*sqrt(nf^2-ns^2);
+[Vmax0,gammamax0,kappamax0,betamax0,neffmax0] = norm_params_from_h(hmax, 0, k0,nf,ns);
+[Vmax2,gammamax2,kappamax2,betamax2,neffmax2] = norm_params_from_h(hmax, 2, k0,nf,ns);
+
+ampmax0 = findAmp(omega,miu_0,betamax0,kappamax0,gammamax0,hmax);
+ampmax2 = findAmp(omega,miu_0,betamax2,kappamax2,gammamax2,hmax);
+
+a2 = 0.0000100417
+Kmax02 = nondegenerateCouplingCoef(ampmax0,ampmax2,pert,hmax,h2,kappamax0,kappamax2);
+BAmax02 = BoverA(Kmax02,betamax0,betamax2,a2);
+%Vmax=4*pi;
+%[hmax,gamma,kappa,beta,neff] = norm_params_from_V(Vmax, 0, k0,nf,ns)
 Area = 4*(length*hmax);
 
+powerFinal = (powerAfterTransmission*powerTransmitted)/4.0;
 
 %Use to get amplitude needed to get correct amplitude, 
 % which then reverse to get width of original wave guide?

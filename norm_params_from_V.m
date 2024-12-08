@@ -5,7 +5,7 @@ function [h,gamma,kappa,beta,neff] = norm_params_from_V(V, mode, k0,nf,ns)
 syms b
 eqn = V==(2*atan(sqrt(b/(1-b)))+mode*pi)/sqrt(1-b);
 b = vpasolve(eqn,b);
-b=double(b)
+b=double(b);
 
 h = V/(k0*sqrt(nf^2-ns^2)); %nm
 k = k0*nf;
