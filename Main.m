@@ -98,20 +98,27 @@ length = 1e-3; %length of waveguides
 
 %Check total area of waveguide
 %Decided two microns was sufficent
-hmax=2e-6;
-Vmax=hmax*k0*sqrt(nf^2-ns^2)
+pert = perturbationConstant(omega, epislon_0,ns,nf);
 
 V2 = 3*pi;
-[h2,gamma2,kappa2,beta2,neff2] = norm_params_from_V(V2, 3, k0,nf,ns);
+[h0,gamma0,kappa0,beta0,neff0] = norm_params_from_V(V2, 0, k0,nf,ns);
+[h2,gamma2,kappa2,beta2,neff2] = norm_params_from_V(V2, 2, k0,nf,ns);
+
+K = nondegenerateCouplingCoef(C,pert,h2,hbeam,kappa0,kappa2);
+BA = BoverA(K,beta0,beta2);
 
 V3 = 5*pi;
-[h3,gamma3,kappa3,beta3,neff3] = norm_params_from_V(V3, 5, k0,nf,ns);
+[h3,gamma3,kappa3,beta3,neff3] = norm_params_from_V(V3, 4, k0,nf,ns);
 
 V4 = 7*pi;
-[h4,gamma4,kappa4,beta4,neff4] = norm_params_from_V(V4, 7, k0,nf,ns);
+[h4,gamma4,kappa4,beta4,neff4] = norm_params_from_V(V4, 6, k0,nf,ns);
 
 modes=V4/pi;
+hmax=2e-6;
+Vmax=hmax*k0*sqrt(nf^2-ns^2);
 Area = 4*(length*hmax);
+
+
 %Use to get amplitude needed to get correct amplitude, 
 % which then reverse to get width of original wave guide?
 
