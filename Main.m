@@ -109,6 +109,7 @@ amp0 = findAmp(omega,miu_0,beta0,kappa0,gamma0,h0);
 amp2 = findAmp(omega,miu_0,beta2,kappa2,gamma2,h2);
 
 h1 = h2-(1e-8);
+[V1,gamma1,kappa1,beta1,neff1] = norm_params_from_h(h1, 0, k0,nf,ns);
 a1 = 0.00000993;
 K02 = nondegenerateCouplingCoef(amp0,amp2,pert,h2,h1,kappa0,kappa2);
 BA02 = BoverA(K02,beta0,beta2,a1);
@@ -130,8 +131,10 @@ BAmax02 = BoverA(Kmax02,betamax0,betamax2,a2);
 %[hmax,gamma,kappa,beta,neff] = norm_params_from_V(Vmax, 0, k0,nf,ns)
 Area = 4*(length*hmax);
 
-powerFinal = (powerAfterTransmission*powerTransmitted)/4.0;
-
+powerFinal = 0.99*((powerAfterTransmission*powerTransmitted)/4.0);
+a0 = 10e-6;
+amax = (1e-3) - 2*(a0+a1+a2);
+timeDelay = (2*a0*neff_beam+2*a1*neff1+2*a2*neff0+amax*neffmax0)/c;
 %Use to get amplitude needed to get correct amplitude, 
 % which then reverse to get width of original wave guide?
 
