@@ -1,10 +1,11 @@
 %Constants
+clear;
 nf = 3.5; %Silicon index of refraction
 ns = 1.5; %SiO2
 c = 3 *10^8;
 epislon_0 = 8.854*10^-12; %F/m
 miu_0 = 4*pi*10^-7; %H/m
-
+claddingDistance = 3e-6;
 %Laser
 laserPower = 10e-3; %mW
 laserAvgWaveLength = 1.5e-6; %microm
@@ -14,11 +15,15 @@ outputPowerMin = 1e-3; %mW
 maxWaveguideArea = 1; %mm^2
 areaVariation = 5e-9; %nm
 
+laserWaveLengths = linspace(1.4e-6,1.6e-6,100);
+
+figure
+plot(laserWaveLengths,calc_k0(laserWaveLengths))
 
 %Laser into first Waveguide
 k0 = 2*pi/laserAvgWaveLength;
 k = k0*nf;
-omega = k*c/nf;
+omega = k0*c;
 
 %Amplitude of Laser
 %Find amplitude of laser based on power
@@ -28,36 +33,27 @@ E_0 = sqrt(laserPower*(miu_0/laserAvgWaveLength)*sqrt(2/((x0^2)*pi)));
 %To find variables that allow us to calculate mode width, which lets use
 %calc power coupling efficiency
 b= 0.0017;
-%b= 0.856;
-V = 2*atan(sqrt(b/(1-b)))/sqrt(1-b);
-h_taper = V/(k0*sqrt(nf^2-ns^2)); %nm
+[h_taper,V_taper,gamma_taper,kappa_taper,beta_taper,neff_taper] = norm_params_from_b(b,0,k0,nf,ns);
+
 h_taper_saved = 6.23e-9; %nm 
 %gamma = k0*sqrt(b*sqrt(nf^2-ns^2))
-beta = k0*sqrt((nf^2-ns^2)*b+ns^2);
-gamma = sqrt(beta^2-(k0^2)*(ns^2));
-mode_width = 1/gamma;
-kappa = sqrt(k^2-beta^2);
+
+mode_width = 1/gamma_taper;
+
 
 %Power efficiency
-powerTransmitted = CouplingPowerEfficiency(1/gamma,x0)
+powerTransmitted = CouplingPowerEfficiency(1/gamma_taper,x0);
 
 %Percent under curve past cladding (loss from lack of cladding)
 %Normalize to get probablity under curve is 1
-%syms A
-%eqn = 1==A*((1/gamma)+(2*sin(kappa*h_taper/2)/cos(kappa*h_taper/2)));
-%s = solve(eqn,A);
-%A = 36028797018963968/5095267110689141;
-%Get percent of power past -3 microns
-claddingDistance = 3e-6;
-total = 2*sin(kappa*h_taper/2)/cos(kappa*h_taper/2)+(1/gamma);
-outsideOfMain = exp(claddingDistance)/(2*gamma);
+
+total = 2*sin(kappa_taper*h_taper/2)/cos(kappa_taper*h_taper/2)+(1/gamma_taper);
+outsideOfMain = exp(claddingDistance)/(2*gamma_taper);
 claddingLoss = (outsideOfMain)/(total);
-modes = V/pi;
+
+modes = V_taper/pi;
 %Aim is to have the balance of the two above numbers be ideal so we get
 %certain percent of power
-
-%Get normalized amplitude
-
 
 h_taper_saved = 6.23e-9; %nm 
 
@@ -65,15 +61,15 @@ h_taper_saved = 6.23e-9; %nm
 
 %Beam Splitter
 powerAfterTransmission = laserPower*powerTransmitted - laserPower*powerTransmitted*claddingLoss;
-b = 0.856;
+b_beam = 0.856;
 hbeam = 0.47e-6; %microns
-beta = k0*sqrt((nf^2-ns^2)*b+ns^2);
-gamma = sqrt(beta^2-(k0^2)*(ns^2));
-mode_width = 1/gamma;
-kappa = sqrt(k^2-beta^2);
+[hbeam,V_beam,gamma_beam,kappa_beam,beta_beam,neff_beam] = norm_params_from_b(b_beam,0,k0,nf,ns);
 
+mode_width_beam = 1/gamma_beam;
+
+omega = k*c/nf;
 %Get amplitude
-C=sqrt((2*powerAfterTransmission)/((1/gamma)+((hbeam)/(cos(kappa*hbeam/2)))))
+C=sqrt((2*powerAfterTransmission)/((1/gamma_beam+((hbeam)/(cos(kappa_beam*hbeam/2))))))
 
 PowerPercentage1 = 1;
 PowerPercentage2 = 0;
@@ -95,9 +91,10 @@ lengthNext2 = 1;
 
 
 %Integral for non-degenerate coupling - change around to solve for
-V = hbeam * k0 * sqrt(nf^2-ns^2);
-neff1 = beta/k0;
+
 length = 1e-3; %length of waveguides
+
+%non-degenerate coupling coefficient
 
 %Check total area of waveguide
 %Decided two microns was sufficent
@@ -105,33 +102,15 @@ hmax=2e-6;
 Vmax=hmax*k0*sqrt(nf^2-ns^2)
 
 V2 = 3*pi;
-h2 = V2/(k0*sqrt(nf^2-ns^2));
-syms b
-eqn = V2==2*atan(sqrt(b/(1-b)))/sqrt(1-b);
-b = vpasolve(eqn,b);
-b=double(b)
-beta2 = k0*sqrt((nf^2-ns^2)*b+ns^2);
-neff2 = beta2/k0;
+[h2,gamma2,kappa2,beta2,neff2] = norm_params_from_V(V2, 3, k0,nf,ns);
 
 V3 = 5*pi;
-h3 = V3/(k0*sqrt(nf^2-ns^2));
-syms b
-eqn = V3==2*atan(sqrt(b/(1-b)))/sqrt(1-b);
-b = vpasolve(eqn,b);
-b=double(b);
-beta3 = k0*sqrt((nf^2-ns^2)*b+ns^2);
-neff3 = beta3/k0;
+[h3,gamma3,kappa3,beta3,neff3] = norm_params_from_V(V3, 5, k0,nf,ns);
 
 V4 = 7*pi;
-h4 = V3/(k0*sqrt(nf^2-ns^2));
-syms b
-eqn = V4==2*atan(sqrt(b/(1-b)))/sqrt(1-b);
-b = vpasolve(eqn,b);
-b=double(b);
-beta4 = k0*sqrt((nf^2-ns^2)*b+ns^2);
-neff4 = beta4/k0;
+[h4,gamma4,kappa4,beta4,neff4] = norm_params_from_V(V4, 7, k0,nf,ns);
 
-modes=V/pi;
+modes=V4/pi;
 Area = 4*(length*hmax);
 %Use to get amplitude needed to get correct amplitude, 
 % which then reverse to get width of original wave guide?
