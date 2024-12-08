@@ -32,7 +32,7 @@ E_0 = sqrt(laserPower*(miu_0/laserAvgWaveLength)*sqrt(2/((x0^2)*pi)));
 
 %To find variables that allow us to calculate mode width, which lets use
 %calc power coupling efficiency
-b= 0.0025;
+b= 0.0024;
 [h_taper,V_taper,gamma_taper,kappa_taper,beta_taper,neff_taper] = norm_params_from_b(b,0,k0,nf,ns);
 
 h_taper_saved = 6.23e-9; %nm 
