@@ -3,7 +3,7 @@ function [powerPercent] = CouplingPowerEfficiency(mode_width_i,mode_width_t,neff
 %   Detailed explanation goes here
 num = (mode_width_i^2)*(mode_width_t^2);
 den = (mode_width_i^2+mode_width_t^2)^2;
-neff = 2*(neffi*nefft)/(neffi+nefft);
-powerPercent = 4*neff*(num/den);
+%neff = 2*(neffi*nefft)/(neffi+nefft)
+powerPercent = 4*(num/den);
 end
 

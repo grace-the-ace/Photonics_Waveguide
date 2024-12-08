@@ -33,9 +33,10 @@ E_0 = sqrt(laserPower*(miu_0/laserAvgWaveLength)*sqrt(2/((x0^2)*pi)));
 %To find variables that allow us to calculate mode width, which lets use
 %calc power coupling efficiency
 b= 0.0024;
-[h_taper,V_taper,gamma_taper,kappa_taper,beta_taper,neff_taper] = norm_params_from_b(b,0,k0,nf,ns);
-
-h_taper_saved = 6.23e-9; %nm 
+%[h_taper,V_taper,gamma_taper,kappa_taper,beta_taper,neff_taper] = norm_params_from_b(b,0,k0,nf,ns);
+h_taper = 4.5e-9;
+[V_taper,gamma_taper,kappa_taper,beta_taper,neff_taper] = norm_params_from_h(h_taper,0,k0,nf,ns);
+h_taper_saved = 2.23e-9; %nm 
 %gamma = k0*sqrt(b*sqrt(nf^2-ns^2))
 
 mode_width = 1/gamma_taper;
@@ -54,8 +55,7 @@ claddingLoss = (outsideOfMain)/(total);
 modes = V_taper/pi;
 %Aim is to have the balance of the two above numbers be ideal so we get
 %certain percent of power
-
-h_taper_saved = 6.23e-9; %nm 
+ 
 
 %Next increase width
 
